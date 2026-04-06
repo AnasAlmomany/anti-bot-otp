@@ -4,11 +4,13 @@ class IntegrityResult {
   final bool jailbrokenOrRooted;
   final bool debuggerAttached;
   final bool suspiciousLibraries;
+  final bool emulator;
 
   IntegrityResult({
     required this.jailbrokenOrRooted,
     required this.debuggerAttached,
     required this.suspiciousLibraries,
+    this.emulator = false,
   });
 }
 
@@ -100,10 +102,12 @@ class IntegrityService {
     final rooted = _checkRoot();
     final debugger = _checkAndroidDebugger();
     final libraries = _checkSuspiciousAndroidLibraries();
+    final emulator = _checkAndroidEmulator();
     return IntegrityResult(
       jailbrokenOrRooted: rooted,
       debuggerAttached: debugger,
       suspiciousLibraries: libraries,
+      emulator: emulator,
     );
   }
 
@@ -166,6 +170,53 @@ class IntegrityService {
         for (final lib in suspiciousLibs) {
           if (content.contains(lib)) return true;
         }
+      }
+    } catch (_) {}
+
+    return false;
+  }
+
+  // --- Android Emulator Detection ---
+
+  static bool _checkAndroidEmulator() {
+    // Check QEMU-specific files
+    const qemuFiles = [
+      '/dev/socket/qemud',
+      '/dev/qemu_pipe',
+      '/sys/qemu_trace',
+      '/system/lib/libc_malloc_debug_qemu.so',
+      '/sys/devices/virtual/misc/qemu_trace',
+    ];
+
+    for (final path in qemuFiles) {
+      if (File(path).existsSync()) return true;
+    }
+
+    // Check build properties for emulator indicators
+    try {
+      final result = Process.runSync('getprop', ['ro.hardware']);
+      final hw = (result.stdout as String).trim().toLowerCase();
+      if (hw == 'goldfish' || hw == 'ranchu' || hw == 'vbox86') return true;
+    } catch (_) {}
+
+    try {
+      final result = Process.runSync('getprop', ['ro.build.product']);
+      final product = (result.stdout as String).trim().toLowerCase();
+      if (product.contains('sdk') ||
+          product.contains('generic') ||
+          product.contains('emulator') ||
+          product.contains('genymotion')) {
+        return true;
+      }
+    } catch (_) {}
+
+    try {
+      final result = Process.runSync('getprop', ['ro.product.model']);
+      final model = (result.stdout as String).trim().toLowerCase();
+      if (model.contains('sdk') ||
+          model.contains('emulator') ||
+          model.contains('android sdk')) {
+        return true;
       }
     } catch (_) {}
 

@@ -45,10 +45,13 @@ class PhoneInputView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.innerGap),
-          TextField(
+          // ExcludeSemantics hides field identity from automation tools (Appium)
+          ExcludeSemantics(
+          child: TextField(
             keyboardType: TextInputType.phone,
             textInputAction: TextInputAction.done,
-            autofillHints: const [AutofillHints.telephoneNumber],
+            // autofillHints intentionally omitted — prevents automation tools
+            // from identifying this field by its semantic purpose
             decoration: InputDecoration(
               hintText: '+1 555 123 4567',
               hintStyle: const TextStyle(color: AppColors.textMuted),
@@ -75,6 +78,7 @@ class PhoneInputView extends StatelessWidget {
               viewModel.recordInteraction();
               viewModel.phone = value;
             },
+          ),
           ),
           const SizedBox(height: AppSpacing.innerGap),
           SizedBox(

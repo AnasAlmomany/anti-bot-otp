@@ -108,10 +108,14 @@ class AuthViewModel extends ChangeNotifier {
       // 4. Build client signals
       final now = DateTime.now();
       final signals = ClientSignals(
+        honeypotName: '',
+        honeypotEmail: '',
+        honeypotUrl: '',
         automationSignals: AutomationSignals(
           jailbroken: integrity.jailbrokenOrRooted,
           debuggerAttached: integrity.debuggerAttached,
           suspiciousDylibs: integrity.suspiciousLibraries,
+          emulator: integrity.emulator,
         ),
         timing: TimingData(
           pageLoadTs: _viewLoadTime.millisecondsSinceEpoch,

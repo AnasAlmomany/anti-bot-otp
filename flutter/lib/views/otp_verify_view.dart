@@ -66,11 +66,14 @@ class _OtpVerifyViewState extends State<OtpVerifyView> {
             ),
           ),
           const SizedBox(height: AppSpacing.innerGap),
-          TextField(
+          // ExcludeSemantics hides field identity from automation tools (Appium)
+          ExcludeSemantics(
+          child: TextField(
             focusNode: _focusNode,
             keyboardType: TextInputType.number,
             textInputAction: TextInputAction.done,
-            autofillHints: const [AutofillHints.oneTimeCode],
+            // autofillHints intentionally omitted — prevents automation tools
+            // from identifying this field by its semantic purpose
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 36,
@@ -109,6 +112,7 @@ class _OtpVerifyViewState extends State<OtpVerifyView> {
             onChanged: (value) {
               viewModel.otpCode = value;
             },
+          ),
           ),
           const SizedBox(height: AppSpacing.innerGap),
           SizedBox(

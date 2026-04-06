@@ -255,12 +255,24 @@ class SessionMeResponse {
 // --- Client Signals ---
 
 class ClientSignals {
+  final String honeypotName;
+  final String honeypotEmail;
+  final String honeypotUrl;
   final AutomationSignals automationSignals;
   final TimingData timing;
 
-  ClientSignals({required this.automationSignals, required this.timing});
+  ClientSignals({
+    this.honeypotName = '',
+    this.honeypotEmail = '',
+    this.honeypotUrl = '',
+    required this.automationSignals,
+    required this.timing,
+  });
 
   Map<String, dynamic> toJson() => {
+        'honeypot_name': honeypotName,
+        'honeypot_email': honeypotEmail,
+        'honeypot_url': honeypotUrl,
         'automation_signals': automationSignals.toJson(),
         'timing': timing.toJson(),
       };
@@ -270,17 +282,20 @@ class AutomationSignals {
   final bool jailbroken;
   final bool debuggerAttached;
   final bool suspiciousDylibs;
+  final bool emulator;
 
   AutomationSignals({
     required this.jailbroken,
     required this.debuggerAttached,
     required this.suspiciousDylibs,
+    this.emulator = false,
   });
 
   Map<String, dynamic> toJson() => {
         'jailbroken': jailbroken,
         'debugger_attached': debuggerAttached,
         'suspicious_dylibs': suspiciousDylibs,
+        'emulator': emulator,
       };
 }
 

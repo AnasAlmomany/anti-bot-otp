@@ -50,8 +50,25 @@ struct SessionMeResponse: Decodable {
 }
 
 struct ClientSignals: Encodable {
+    let honeypot_name: String
+    let honeypot_email: String
+    let honeypot_url: String
     let automation_signals: AutomationSignals?
     let timing: TimingData?
+
+    init(
+        honeypot_name: String = "",
+        honeypot_email: String = "",
+        honeypot_url: String = "",
+        automation_signals: AutomationSignals? = nil,
+        timing: TimingData? = nil
+    ) {
+        self.honeypot_name = honeypot_name
+        self.honeypot_email = honeypot_email
+        self.honeypot_url = honeypot_url
+        self.automation_signals = automation_signals
+        self.timing = timing
+    }
 
     struct AutomationSignals: Encodable {
         let jailbroken: Bool

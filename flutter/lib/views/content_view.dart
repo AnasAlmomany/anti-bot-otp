@@ -104,23 +104,24 @@ class ContentView extends StatelessWidget {
     );
   }
 
+  // Opaque keys prevent automation tools from identifying screens by key value
   Widget _buildContent(AuthViewModel viewModel) {
     switch (viewModel.state) {
       case AuthState.phoneInput:
       case AuthState.error:
-        return PhoneInputView(key: const ValueKey('phone'));
+        return PhoneInputView(key: const ValueKey(0xA1));
       case AuthState.runningPreflight:
       case AuthState.solvingPoW:
       case AuthState.sendingOtp:
         return LoadingView(
-          key: const ValueKey('loading'),
+          key: const ValueKey(0xB2),
           message: viewModel.statusMessage,
         );
       case AuthState.otpSent:
       case AuthState.verifyingOtp:
-        return OtpVerifyView(key: const ValueKey('otp'));
+        return OtpVerifyView(key: const ValueKey(0xC3));
       case AuthState.authenticated:
-        return SessionView(key: const ValueKey('session'));
+        return SessionView(key: const ValueKey(0xD4));
     }
   }
 }
